@@ -29,20 +29,20 @@ usage() {
 	exit
 }
 [ -z "$*" ] && usage
-
+TOCONV=""
 for f in $*;do
 	echo "Downloading $f..."
 	PAGE="$(curl -s "$f")"
-	URL=$(echo "$PAGE" | sed '/data-normal/!d;s/.*data-normal="//;s/\s.*//g' | tr -s '\n' ' ')
-	TITLE=$(echo "$PAGE" | sed '/^[<]title[>]/!d;s/^[<]title[>]//g;s/[<]\/title[>]$//g')
-	MD5=$(echo "$TITLE" | md5sum | sed 's/\s.*//g')
-	mkdir $MD5
-	for url in $URL;do
-		curl -s "$url" -o $MD5"/"$(echo "$url" | sed 's/\?.*//g;s/.*\///g')
+	URLS=$(echo "$PAGE" | sed '/data-normal/!d;s/.*data-normal="//;s/\s.*//g' | tr -s '\n' ' ')
+	TITLE=$(echo "$PAGE" | sed '/[<]title[>]/!d;s/.*[<]title[>]//g;s/[<]\/title[>].*//g')
+	mkdir "$TITLE"
+	for URL in $URLS;do
+		FNAME="$TITLE/"$(echo "$URL" | sed 's/\?.*//g;s/.*\///g')
+		curl -sL "$URL" -o "$FNAME"
+		TOCONV="$TOCONV $FNAME"
 	done
-	convert $MD5"/*" -gravity South -annotate 0 '%f' "$TITLE".pdf
-	rm -r $MD5
-	echo "Saved in $TITLE.pdf"
+	convert $TOCONV -gravity South -annotate 0 '%f' "$TITLE".pdf
+	echo "Saved in $TITLE.pdf, source images are in $TITLE/."
 done
 
 echo "Bye!"

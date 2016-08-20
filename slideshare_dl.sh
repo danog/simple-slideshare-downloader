@@ -35,13 +35,17 @@ for f in $*;do
 	PAGE="$(curl -s "$f")"
 	URLS=$(echo "$PAGE" | sed '/data-normal/!d;s/.*data-normal="//;s/\s.*//g' | tr -s '\n' ' ')
 	TITLE=$(echo "$PAGE" | sed '/[<]title[>]/!d;s/.*[<]title[>]//g;s/[<]\/title[>].*//g')
-	mkdir "$TITLE"
+	SAFETITLE="${TITLE//[^a-zA-Z0-9 ]/}"
+	SAFETITLE=$(echo "$SAFETITLE" | sed 's/^\s*//g;s/\s*$//g')
+	SAFETITLE="${SAFETITLE// /_}"
+	mkdir "$SAFETITLE"
 	for URL in $URLS;do
-		FNAME="$TITLE/"$(echo "$URL" | sed 's/\?.*//g;s/.*\///g')
+		FNAME="$SAFETITLE/"$(echo "$URL" | sed 's/\?.*//g;s/.*\///g')
 		curl -sL "$URL" -o "$FNAME"
 		TOCONV="$TOCONV $FNAME"
 	done
 	convert $TOCONV -gravity South -annotate 0 '%f' "$TITLE".pdf
+	mv "$SAFETITLE" "$TITLE"
 	echo "Saved in $TITLE.pdf, source images are in $TITLE/."
 done
 

@@ -29,8 +29,9 @@ usage() {
 	exit
 }
 [ -z "$*" ] && usage
-TOCONV=""
+
 for f in $*;do
+	TOCONV=""
 	echo "Downloading $f..."
 	PAGE="$(curl -s "$f")"
 	URLS=$(echo "$PAGE" | sed '/data-normal/!d;s/.*data-normal="//;s/\s.*//g' | tr -s '\n' ' ')

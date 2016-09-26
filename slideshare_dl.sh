@@ -19,7 +19,7 @@
 
 echo "Simple slideshare downloader   Copyright (C) 2016  Daniil Gentili.
 This program comes with ABSOLUTELY NO WARRANTY; for details see 
-https://github.com/danog/git-reset-repo/blob/master/LICENSE.
+https://github.com/danog/simple-slideshare-downloader/blob/master/LICENSE.
 This is free software, and you are welcome to redistribute it
 under certain conditions: see https://github.com/danog/simple-slideshare-downloader/blob/master/LICENSE.
 "
